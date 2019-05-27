@@ -1,0 +1,35 @@
+import wollok.game.*
+import Hector.*
+import Plantas.*
+
+program farmvilleGame{
+
+//	CONFIG	
+	game.title("FarmVille")
+	game.height(10)
+	game.width(10)
+	game.ground("ground.png")
+	
+// VISUALES
+	game.addVisual(hector)	
+	
+// TECLADO
+	keyboard.w().onPressDo { hector.move(hector.position().up(1)) }
+	keyboard.s().onPressDo { hector.move(hector.position().down(1)) }
+	keyboard.a().onPressDo { hector.move(hector.position().left(1)) }
+	keyboard.d().onPressDo { hector.move(hector.position().right(1)) }
+	
+	keyboard.m().onPressDo {hector.sembrar(new Maiz())}
+	keyboard.t().onPressDo {hector.sembrar(new Trigo())}
+	keyboard.o().onPressDo {hector.sembrar(new Tomaco())}
+	
+	keyboard.r().onPressDo {hector.regar()}
+	
+	keyboard.c().onPressDo {hector.cosechar()}
+	
+	keyboard.v().onPressDo {hector.vender()}
+	
+	keyboard.backspace().onPressDo{hector.darInfo()}
+	
+	game.start()
+}
