@@ -6,7 +6,6 @@ object hector {
 	var trigo = []
 	var tomaco = []
 	var oro = 0
-	var plantasCosechadas = []
 	var property position = game.at(7,5)
 	method image()= "player.png"
 	
@@ -23,8 +22,6 @@ object hector {
 	
 	method agregarPlanta(planta) = plantas.add(planta)
 	
-	method plantaCosechada(planta) = plantasCosechadas.add(planta)
-	
 	method regar(){
 		if(self.hayPlanta()){
 			self.quePlantaHay().crecer()
@@ -35,16 +32,17 @@ object hector {
 	}
 	
 	method hayPlanta() = plantas.any{
-		planta => planta.position() == self.position()//
+		planta => self.mismaPosicion(planta)
 	}
 	
 	method quePlantaHay() = plantas.find{
-		planta => planta.position() == self.position()//
+		planta => self.mismaPosicion(planta)
 	}
+	
+	method mismaPosicion(planta) = planta.position() == self.position()
 	
 	method cosechar(){
 		if(self.hayPlanta()){
-			self.plantaCosechada(self.quePlantaHay())//????
 			self.quePlantaHay().cosechada()///????
 		}
 		else{
@@ -56,19 +54,19 @@ object hector {
 	method agregarTrigo(planta) = trigo.add(planta)
 	method agregarTomaco(planta) = tomaco.add(planta)
 	
-	method venderMaiz() = maiz.size() * 150
-	method venderTrigo() = trigo.sum{trig => self.valorTrigo(trig)}
+	method gananciaMaiz() = maiz.size() * 150
+	method gananciaTrigo() = trigo.sum{trig => self.valorTrigo(trig)}
 	method valorTrigo(trig) = (trig.etapa()-1) * 100
-	method venderTomaco() = tomaco.size() * 80
+	method gananciaTomaco() = tomaco.size() * 80
 	
-	method ganancia() = self.venderTrigo() + self.venderMaiz() + self.venderTomaco()
+	method ganancia() = self.gananciaTrigo() + self.gananciaMaiz() + self.gananciaTomaco()
 	
 	method vender(){
 		oro += self.ganancia()
 		self.entregarPlantas()
 	}
 	
-	method entregarPlantas(){
+	method entregarPlantas(){//??????
 		maiz = []
 		trigo = []
 		tomaco = []

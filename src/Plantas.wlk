@@ -18,8 +18,7 @@ class Maiz{
 			hector.agregarMaiz(self)
 			game.removeVisual(self)
 	}
-
-}
+	}
 }
 class Trigo{
 	var property position
@@ -40,7 +39,7 @@ class Trigo{
 		hector.agregarTrigo(self)	
 		game.removeVisual(self)
 	}
-}
+	}
 }
 
 class Tomaco{
