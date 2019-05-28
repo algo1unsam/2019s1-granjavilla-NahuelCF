@@ -17,7 +17,7 @@ class Maiz{
 		if(adulta){
 			hector.agregarMaiz(self)
 			game.removeVisual(self)
-	}
+		}
 	}
 }
 class Trigo{
@@ -25,14 +25,13 @@ class Trigo{
 	var property etapa = 0
 	var property image = "wheat_0.png"
 	
-	method crecer(){//!!!!!!!!!!!!!!!!
+	method crecer(){//!!!
 		etapa++
-		if(etapa>=4) etapa = 0
-		if(etapa == 0) image = "wheat_0.png"
-		if(etapa == 1) image = "wheat_1.png"
-		if(etapa == 2) image = "wheat_2.png"
-		if(etapa == 3) image = "wheat_3.png"
+		self.verificarEtapa()
+		image = "wheat_" + etapa + ".png"
 	}
+	
+	method verificarEtapa() = {if(etapa>3) etapa = 0}
 	
 	method cosechada(){
 		if(etapa >= 2){
@@ -45,10 +44,21 @@ class Trigo{
 class Tomaco{
 	var property position
 	var property image = "tomaco_baby.png"
+	var adulta = false
 	
 	method crecer(){
-		self.position().up(1)//????
+		if(not adulta){
+			image = "tomaco.png"
+		}
+		position = position.up(1)
+		if(self.seFueDelTablero()){
+			self.volverAbajo()
+		}
 	}
+	
+	method seFueDelTablero() = position.y() == 11
+	
+	method volverAbajo() = (position = game.at(position.x(),0))
 	
 	method cosechada(){
 		hector.agregarTomaco(self)

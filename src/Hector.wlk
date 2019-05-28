@@ -1,7 +1,6 @@
 import wollok.game.*
 
 object hector {
-	var plantas = []
 	var maiz = []
 	var trigo = []
 	var tomaco = []
@@ -13,17 +12,18 @@ object hector {
 		self.position(nuevaPosicion)
 	}
 	
-	method sembrar(planta){//???????????
-		planta.position(self.position())
-		game.addVisual(planta)
-		self.agregarPlanta(planta)
+	method sembrar(planta){
+		if(self.noHayPlanta()){
+			planta.position(self.position())
+			game.addVisual(planta)
+		}
+		else{
+			self.error("Ya hay una planta acà")
+		}
 		}
 	
-	
-	method agregarPlanta(planta) = plantas.add(planta)
-	
 	method regar(){
-		if(self.hayPlanta()){
+		if(not self.noHayPlanta()){
 			self.quePlantaHay().crecer()
 		}
 		else{
@@ -31,19 +31,15 @@ object hector {
 		}
 	}
 	
-	method hayPlanta() = plantas.any{
-		planta => self.mismaPosicion(planta)
+	method noHayPlanta(){
+		return game.colliders(self).isEmpty()
 	}
 	
-	method quePlantaHay() = plantas.find{
-		planta => self.mismaPosicion(planta)
-	}
-	
-	method mismaPosicion(planta) = planta.position() == self.position()
+	method quePlantaHay() = game.colliders(self).first()
 	
 	method cosechar(){
-		if(self.hayPlanta()){
-			self.quePlantaHay().cosechada()///????
+		if(not self.noHayPlanta()){
+			self.quePlantaHay().cosechada()
 		}
 		else{
 			self.error("No tengo nada para cosechar")//el msg lo da la planta
@@ -66,7 +62,9 @@ object hector {
 		self.entregarPlantas()
 	}
 	
-	method entregarPlantas(){//??????
+	method estaEnLaTienda() = game.colliders(self).isEmpty()
+	
+	method entregarPlantas(){//???
 		maiz = []
 		trigo = []
 		tomaco = []

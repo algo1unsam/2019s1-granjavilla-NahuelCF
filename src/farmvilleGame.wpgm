@@ -1,17 +1,25 @@
 import wollok.game.*
 import Hector.*
 import Plantas.*
+import Mercados.*
 
 program farmvilleGame{
 
 //	CONFIG	
 	game.title("FarmVille")
-	game.height(10)
-	game.width(10)
+	game.height(11)
+	game.width(11)
 	game.ground("ground.png")
 	
+	var mercado1 = new Mercado(position = game.at(1,10),oro = 500,mercaderia = [new Maiz(),new Trigo()])
+	var mercado2 = new Mercado(position = game.at(5,10),oro = 500,mercaderia = [new Maiz(),new Trigo()])
+	var mercado3 = new Mercado(position = game.at(9,10),oro = 500,mercaderia = [new Maiz(),new Trigo()])
+	
 // VISUALES
-	game.addVisual(hector)	
+	game.addVisual(hector)
+	game.addVisual(mercado1)
+	game.addVisual(mercado2)
+	game.addVisual(mercado3)
 	
 // TECLADO
 	keyboard.w().onPressDo { hector.move(hector.position().up(1)) }
@@ -29,7 +37,7 @@ program farmvilleGame{
 	
 	keyboard.v().onPressDo {hector.vender()}
 	
-	keyboard.backspace().onPressDo{hector.darInfo()}
+	keyboard.space().onPressDo{hector.darInfo()}
 	
 	game.start()
 }
