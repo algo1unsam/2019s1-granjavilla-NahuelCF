@@ -58,13 +58,36 @@ object hector {
 	method ganancia() = self.gananciaTrigo() + self.gananciaMaiz() + self.gananciaTomaco()
 	
 	method vender(){
-		oro += self.ganancia()
-		self.entregarPlantas()
+		if(not self.noEstaEnLaTienda()){
+			if(self.tiendaPuedePagar()){
+				self.tiendaPaga()
+				oro += self.ganancia()
+				self.entregarPlantas()
+				
+			}
+			else{
+				self.error("Esta tienda no tiene suficiente dinero")
+			}
+		}
+		else{
+			self.error("Necesito estar en una tienda")
+		}
 	}
 	
-	method estaEnLaTienda() = game.colliders(self).isEmpty()
+	method noEstaEnLaTienda() = game.colliders(self).isEmpty()
 	
-	method entregarPlantas(){//???
+	method tiendaDondeEsta() = game.colliders(self).first()
+	
+	method tiendaPuedePagar() = self.oroDeLaTienda() >= self.ganancia()
+	
+	method oroDeLaTienda() = self.tiendaDondeEsta().oro()
+	
+	method tiendaPaga(){
+		self.tiendaDondeEsta().oro(self.oroDeLaTienda() - self.ganancia())
+		
+	}
+	
+	method entregarPlantas(){
 		maiz = []
 		trigo = []
 		tomaco = []
