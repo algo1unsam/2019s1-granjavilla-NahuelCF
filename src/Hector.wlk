@@ -1,9 +1,10 @@
 import wollok.game.*
 
 object hector {
-	var maiz = []
-	var trigo = []
-	var tomaco = []
+	var property maiz = []
+	var property trigo = []
+	var property tomaco = []
+	var plantas = [maiz,trigo,tomaco]
 	var oro = 0
 	var property position = game.at(7,5)
 	method image()= "player.png"
@@ -13,7 +14,7 @@ object hector {
 	}
 	
 	method sembrar(planta){
-		if(self.noHayPlanta()){
+		if(not self.hayPlanta()){
 			planta.position(self.position())
 			game.addVisual(planta)
 		}
@@ -22,80 +23,68 @@ object hector {
 		}
 		}
 	
-	method regar(){
-		if(not self.noHayPlanta()){
-			self.quePlantaHay().crecer()
-		}
-		else{
-			self.error("No tengo nada para regar")//el msg lo da la planta
-		}
-	}
+	method regar(planta) = planta.crecer()
 	
-	method noHayPlanta(){
-		return game.colliders(self).isEmpty()
-	}
+	method hayPlanta() = not game.colliders(self).isEmpty()
 	
-	method quePlantaHay() = game.colliders(self).first()
+	method quePlantaHay(mensaje) = 
+		if(self.hayPlanta()) game.colliders(self).first() 
+		else self.error("No tengo nada para " + mensaje)
 	
-	method cosechar(){
-		if(not self.noHayPlanta()){
-			self.quePlantaHay().cosechada()
-		}
-		else{
-			self.error("No tengo nada para cosechar")//el msg lo da la planta
-		}
-	}
+	method cosechar(planta) = planta.cosechada()
 	
-	method agregarMaiz(planta) = maiz.add(planta)
-	method agregarTrigo(planta) = trigo.add(planta)
-	method agregarTomaco(planta) = tomaco.add(planta)
-	
-	method gananciaMaiz() = maiz.size() * 150
-	method gananciaTrigo() = trigo.sum{trig => self.valorTrigo(trig)}
+	method gananciaTotalMaiz() = maiz.size() * 150
+	method gananciaTotalTrigo() = trigo.sum{trig => self.valorTrigo(trig)}
 	method valorTrigo(trig) = (trig.etapa()-1) * 100
-	method gananciaTomaco() = tomaco.size() * 80
+	method gananciaTotalTomaco() = tomaco.size() * 80
 	
-	method ganancia() = self.gananciaTrigo() + self.gananciaMaiz() + self.gananciaTomaco()
+	method gananciaTotal() = self.gananciaTotalTrigo() + self.gananciaTotalMaiz() + self.gananciaTotalTomaco()
 	
-	method vender(){
-		if(not self.noEstaEnLaTienda()){
-			if(self.tiendaPuedePagar()){
-				self.tiendaPaga()
-				oro += self.ganancia()
-				self.entregarPlantas()
-				
-			}
-			else{
-				self.error("Esta tienda no tiene suficiente dinero")
-			}
+	method vender(tienda){
+		self.intentarComerciar(tienda)
+	}
+	
+	method intentarComerciar(tienda){
+		if(self.tiendaPuedePagar(tienda)){
+			self.comerciar(tienda)
 		}
 		else{
-			self.error("Necesito estar en una tienda")
+			self.error("Esta tienda no tiene suficiente dinero")
 		}
 	}
 	
-	method noEstaEnLaTienda() = game.colliders(self).isEmpty()
-	
-	method tiendaDondeEsta() = game.colliders(self).first()
-	
-	method tiendaPuedePagar() = self.oroDeLaTienda() >= self.ganancia()
-	
-	method oroDeLaTienda() = self.tiendaDondeEsta().oro()
-	
-	method tiendaPaga(){
-		self.tiendaDondeEsta().oro(self.oroDeLaTienda() - self.ganancia())
-		
+	method comerciar(tienda){
+		self.tiendaPaga(tienda)
+		self.entregarPlantas(tienda)
 	}
 	
-	method entregarPlantas(){
-		maiz = []
-		trigo = []
-		tomaco = []
+	method estaEnLaTienda() = not game.colliders(self).isEmpty()
+	
+	method tiendaDondeEsta() = 
+		if (self.estaEnLaTienda())game.colliders(self).first()
+		else self.error("Necesito estar en una tienda")
+	
+	method tiendaPuedePagar(tienda) = self.oroDeLaTienda(tienda) >= self.gananciaTotal()
+	
+	method oroDeLaTienda(tienda) = tienda.oro()
+	
+	method tiendaPaga(tienda){
+		self.tiendaEntregaDinero(tienda)
+		oro += self.gananciaTotal()
 	}
 	
-	method cantPlantasParaVender() = maiz.size() + trigo.size() + tomaco.size()
+	method tiendaEntregaDinero(tienda) = tienda.oro(tienda.oro() - self.gananciaTotal())
+	
+	method entregarPlantas(tienda){
+		self.darPlantas(tienda)
+		plantas.forEach{tipo => tipo.clear()}
+	}
+	
+	method darPlantas(tienda) = tienda.mercaderia().addAll(maiz+trigo+tomaco)
+	
+	method cantPlantasParaVender() = plantas.sum{tipo => tipo.size()}
 	
 	method darInfo(){
-		game.say(self,"tengo " + oro + " monedas y " + self.cantPlantasParaVender() + " planta/as para vender")
+		game.say(self,"tengo " + oro + " monedas ,y " + self.cantPlantasParaVender() + " planta/as para vender")
 	}
 }

@@ -12,10 +12,8 @@ program farmvilleGame{
 	game.ground("ground.png")
 	
 	var mercado1 = new Mercado(position = game.at(1,10),oro = 500,mercaderia = [])
-	var mercado2 = new Mercado(position = game.at(5,10),oro = 500,mercaderia = [])
-	var mercado3 = new Mercado(position = game.at(9,10),oro = 500,mercaderia = [])
-	
-	//game.onTick(1000,hector,game.say(hector,"hola"))
+	var mercado2 = new Mercado(position = game.at(5,10),oro = 1500,mercaderia = [])
+	var mercado3 = new Mercado(position = game.at(9,10),oro = 2000,mercaderia = [])
 	
 // VISUALES
 	game.addVisual(hector)
@@ -33,13 +31,15 @@ program farmvilleGame{
 	keyboard.t().onPressDo {hector.sembrar(new Trigo())}
 	keyboard.o().onPressDo {hector.sembrar(new Tomaco())}
 	
-	keyboard.r().onPressDo {hector.regar()}
+	keyboard.r().onPressDo {hector.regar(hector.quePlantaHay("regar"))}
 	
-	keyboard.c().onPressDo {hector.cosechar()}
+	keyboard.c().onPressDo {hector.cosechar(hector.quePlantaHay("cosechar"))}
 	
-	keyboard.v().onPressDo {hector.vender()}
+	keyboard.v().onPressDo {hector.vender(hector.tiendaDondeEsta())}
 	
 	keyboard.space().onPressDo{hector.darInfo()}
+	
+	game.errorReporter(hector)
 	
 	game.start()
 }
